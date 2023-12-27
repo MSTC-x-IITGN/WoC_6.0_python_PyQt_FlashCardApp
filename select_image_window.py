@@ -14,7 +14,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 class Ui_ImgSelectWindow(object):
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
-        MainWindow.resize(1049, 790)
+        MainWindow.resize(1059, 820)
         self.centralwidget = QtWidgets.QWidget(MainWindow)
         self.centralwidget.setObjectName("centralwidget")
         self.add_window_frame = QtWidgets.QFrame(self.centralwidget)
@@ -33,7 +33,9 @@ class Ui_ImgSelectWindow(object):
         font = QtGui.QFont()
         font.setPointSize(9)
         #self.flash_card_options.setCurrentFont(font)
-
+        self.flash_card_options.addItem("Image Occlusion")
+        self.flash_card_options.addItem("Basic")
+        self.flash_card_options.addItem("Basic (and Reversed card)")
         self.flash_card_options.setObjectName("flash_card_options")
         self.Deck_Options = QtWidgets.QComboBox(self.add_window_frame)
         self.Deck_Options.setGeometry(QtCore.QRect(600, 30, 391, 31))
@@ -204,7 +206,7 @@ class Ui_ImgSelectWindow(object):
 
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
-        MainWindow.setWindowTitle(_translate("MainWindow", "MainWindow"))
+        MainWindow.setWindowTitle(_translate("Add FlashCard", "Add FlashCard"))
         self.deck_label.setText(_translate("MainWindow", "Deck:"))
         self.flashcard_type_label.setText(_translate("MainWindow", "FlashCard Type:"))
         self.groupBox.setTitle(_translate("MainWindow", "ToolBox"))

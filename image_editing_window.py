@@ -9,12 +9,16 @@
 
 
 from PyQt5 import QtCore, QtGui, QtWidgets
+from PyQt5.QtWidgets import QApplication, QMainWindow, QLabel, QVBoxLayout,QFileDialog, QGraphicsScene, QGraphicsView, QGraphicsPixmapItem, QGraphicsEllipseItem, QGraphicsRectItem, QGraphicsTextItem, QGraphicsPolygonItem, QGraphicsItem
+from PyQt5.QtGui import QTextCursor, QTextCharFormat,QFont,QTextListFormat,QTextBlockFormat,QTextImageFormat,QPixmap,QPainter
+from PyQt5.QtGui import QPixmap, QPainter
+from PyQt5.QtCore import Qt, QPoint, QRect
 
 
 class Ui_ImgEditWindow(object):
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
-        MainWindow.resize(1033, 804)
+        MainWindow.resize(1059, 820)
         self.centralwidget = QtWidgets.QWidget(MainWindow)
         self.centralwidget.setObjectName("centralwidget")
         self.add_window_frame = QtWidgets.QFrame(self.centralwidget)
@@ -27,8 +31,8 @@ class Ui_ImgEditWindow(object):
         self.add_window_frame.setFrameShape(QtWidgets.QFrame.StyledPanel)
         self.add_window_frame.setFrameShadow(QtWidgets.QFrame.Raised)
         self.add_window_frame.setObjectName("add_window_frame")
-        self.flash_card_options = QtWidgets.QFontComboBox(self.add_window_frame)
-        self.flash_card_options.setGeometry(QtCore.QRect(140, 30, 391, 31))
+        self.flash_card_options = QtWidgets.QComboBox(self.add_window_frame)
+        self.flash_card_options.setGeometry(QtCore.QRect(146, 30, 391, 31))
         font = QtGui.QFont()
         font.setPointSize(9)
         font.setBold(False)
@@ -38,9 +42,13 @@ class Ui_ImgEditWindow(object):
         self.flash_card_options.setDuplicatesEnabled(False)
         self.flash_card_options.setFrame(True)
         font = QtGui.QFont()
-        self.flash_card_options.setCurrentFont(font)
+        #self.flash_card_options.setCurrentFont(font)
+        self.flash_card_options.addItem("Image Occlusion")
+        self.flash_card_options.addItem("Basic")
+        self.flash_card_options.addItem("Basic (and Reversed card)")
         self.flash_card_options.setObjectName("flash_card_options")
-        self.Deck_Options = QtWidgets.QFontComboBox(self.add_window_frame)
+        self.flash_card_options.setObjectName("flash_card_options")
+        self.Deck_Options = QtWidgets.QComboBox(self.add_window_frame)
         self.Deck_Options.setGeometry(QtCore.QRect(600, 30, 391, 31))
         font = QtGui.QFont()
         font.setPointSize(9)
@@ -51,7 +59,7 @@ class Ui_ImgEditWindow(object):
         self.Deck_Options.setDuplicatesEnabled(False)
         self.Deck_Options.setFrame(True)
         font = QtGui.QFont()
-        self.Deck_Options.setCurrentFont(font)
+        #self.Deck_Options.setCurrentFont(font)
         self.Deck_Options.setObjectName("Deck_Options")
         self.deck_label = QtWidgets.QLabel(self.add_window_frame)
         self.deck_label.setGeometry(QtCore.QRect(550, 30, 51, 31))
@@ -266,6 +274,9 @@ class Ui_ImgEditWindow(object):
         self.rotate_image_button.setObjectName("rotate_image_button")
         self.rec_shape_button = QtWidgets.QToolButton(self.add_window_frame)
         self.rec_shape_button.setGeometry(QtCore.QRect(20, 310, 41, 41))
+
+        #self.rec_shape_button.setCheckable(True)
+        
         font = QtGui.QFont()
         font.setPointSize(9)
         font.setBold(False)
@@ -300,6 +311,9 @@ class Ui_ImgEditWindow(object):
         self.toolButton_4.setObjectName("toolButton_4")
         self.text_widget_button = QtWidgets.QToolButton(self.add_window_frame)
         self.text_widget_button.setGeometry(QtCore.QRect(20, 500, 41, 41))
+
+        self.text_widget_button.setCheckable(True)
+
         font = QtGui.QFont()
         font.setPointSize(6)
         font.setBold(False)
@@ -447,6 +461,25 @@ class Ui_ImgEditWindow(object):
         self.image_label.setGeometry(QtCore.QRect(80, 250, 831, 451))
         self.image_label.setAlignment(QtCore.Qt.AlignCenter)
         self.image_label.setObjectName("image_label")
+        # self.scene = QGraphicsScene(MainWindow)
+        # self.view = QGraphicsView(self.scene)
+        # self.view.setSceneRect(80, 250, 831, 451)
+
+        self.scene = QGraphicsScene(self.image_label)
+        self.view = QGraphicsView(self.scene, self.image_label)
+        self.view.setGeometry(QtCore.QRect(0, 0, 831, 451))
+        #self.file_name,_= QFileDialog.getOpenFileName(self,"Select Image","C:\\Users\\Swayam\\OneDrive\\Pictures","All Files (*);; PNG Files(*.png);;JPG Files (*.jpg)")
+        # self.file_name = ".//images/Gandhi_bapu.jpg"
+        # if self.file_name:
+        #     pixmap = QPixmap(self.file_name)
+        #     item = QGraphicsPixmapItem(pixmap)
+        #     self.scene.clear()
+        #     self.scene.addItem(item)
+        #     self.view = QGraphicsView(self.scene)
+        #     self.view.setRenderHint(QPainter.Antialiasing, True)
+        #     self.view.setRenderHint(QPainter.SmoothPixmapTransform, True)
+        #     self.view.setInteractive(True)
+
 
         
         self.pushButton = QtWidgets.QPushButton(self.add_window_frame)
@@ -479,12 +512,47 @@ class Ui_ImgEditWindow(object):
         self.right_align_image_button.setObjectName("right_align_image_button")
         MainWindow.setCentralWidget(self.centralwidget)
 
+        self.rect_color = Qt.red
+        self.begin, self.destination = QPoint(), QPoint()
+        
         self.retranslateUi(MainWindow)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
+
+    def paintEvent(self, event):
+        if self.image_label.pixmap() is None:
+            return
+
+        painter = QPainter(self.scene)
+        if not self.begin.isNull() and not self.destination.isNull():
+            rect = QRect(self.begin, self.destination)
+            painter.fillRect(rect.normalized(), self.rect_color)
+            painter.drawRect(rect.normalized())
+
+    def mousePressEvent(self, event):
+        if event.buttons() & Qt.LeftButton:
+            self.begin = event.pos()
+            self.destination = self.begin
+            self.update()
+
+    def mouseMoveEvent(self, event):
+        if event.buttons() & Qt.LeftButton:
+            self.destination = event.pos()
+            self.update()
+
+    def mouseReleaseEvent(self, event):
+        if event.button() & Qt.LeftButton:
+            rect = QRect(self.begin, self.destination)
+            if self.image_label.pixmap() is not None:
+                painter = QPainter(self.scene)
+                painter.fillRect(rect.normalized(), self.rect_color)
+                painter.drawRect(rect.normalized())
+                self.begin, self.destination = QPoint(), QPoint()
+                self.update()
+
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
-        MainWindow.setWindowTitle(_translate("MainWindow", "MainWindow"))
+        MainWindow.setWindowTitle(_translate("Add FlashCard", "Add FlashCard"))
         self.deck_label.setText(_translate("MainWindow", "Deck:"))
         self.flashcard_type_label.setText(_translate("MainWindow", "FlashCard Type:"))
         self.groupBox.setTitle(_translate("MainWindow", "ToolBox"))
@@ -519,7 +587,7 @@ class Ui_ImgEditWindow(object):
         self.toolButton_28.setText(_translate("MainWindow", "group"))
         self.toolButton_29.setText(_translate("MainWindow", "ungroup"))
         self.left_align_image_button.setText(_translate("MainWindow", "l_align"))
-        self.image_label.setText(_translate("MainWindow", ""))
+        #self.image_label.setText(_translate("MainWindow", ""))
         self.pushButton.setText(_translate("MainWindow", "Add"))
         self.pushButton_2.setText(_translate("MainWindow", "Close"))
         self.center_align_image_button.setText(_translate("MainWindow", "c_align"))

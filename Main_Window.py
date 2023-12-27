@@ -256,7 +256,7 @@ class Ui_MainWindow(object):
 
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
-        MainWindow.setWindowTitle(_translate("FlashCard Application", "FlashCard Application"))
+        MainWindow.setWindowTitle(_translate("Anki-RecallHub", "Anki-RecallHub"))
         self.card_count_Label.setText(_translate("MainWindow", f"Studied {self.card} cards in {self.sec} seconds today {self.rat} s/card"))
         self.deck_button.setText(_translate("MainWindow", "Decks"))
         self.create_deck_button.setText(_translate("MainWindow", "Create Deck"))
